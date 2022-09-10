@@ -1,1 +1,1 @@
-BBDAYS HACKATON 2022 
+bibidejs hakaton 2022 
