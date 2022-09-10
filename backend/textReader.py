@@ -6,7 +6,14 @@ class TextReader:
 
     def read_text(self):
         # Read the data
-        text = self.model_name.readtext(self.image_name, detail=0, paragraph=self.in_line)
+        textTuple = self.model_name.readtext(self.image_name, detail=1)
 
-        # Join texts writing each text in new line
-        return '\n'.join(text)
+        textList = []
+
+        # Delete confidence score from data and add to list
+
+        for data in textTuple:
+            data = data[:-1]
+            textList.append(data)
+
+        return textList
