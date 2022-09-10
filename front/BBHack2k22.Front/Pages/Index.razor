@@ -1,5 +1,7 @@
 ﻿@page "/"
 @using System.Net.Http.Headers
+@using BBHack2k22.Front.Models
+@inject HttpClient Client
 
 
 <PageTitle>Create File</PageTitle>
@@ -27,6 +29,10 @@
                         File: @file
                         <br>
                     </li>
+                    <li>
+                        Stored File Name: @GetStoredFiles(file)
+                        <br>
+                    </li>
                 }
             </ul>
         </div>
@@ -38,6 +44,7 @@
 @code
 {
     private List<string> fileNames = new();
+    private List<UploadResult> _uploadResults = new();
     long maxFileSize = 1024 * 1 * 1_000_000;
     
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
@@ -52,7 +59,18 @@
 
             content.Add(content: fileContent, name: "\"files\"", fileName: file.Name);
         }
-        
-        StateHasChanged();
+
+        var response = await Client.PostAsync("http://localhost:5072/api/Filesave", content);
+
+        var newUploadResult = await response.Content.ReadFromJsonAsync<List<UploadResult>>();
+
+        if (newUploadResult is not null)
+            _uploadResults.Concat(newUploadResult).ToList();
+    }
+
+    private string? GetStoredFiles(string fileName)
+    {
+        var uploadResult = _uploadResults.FirstOrDefault(x => x.FileName == fileName);
+        return uploadResult?.StoredFileName ?? "Filed not found";
     }
 }

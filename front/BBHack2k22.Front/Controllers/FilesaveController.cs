@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class FilesaveController : ControllerBase
 {
     private readonly IWebHostEnvironment env;
@@ -24,7 +24,7 @@ public class FilesaveController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<IList<UploadResult>>> PostFile(
+    public async Task<ActionResult<List<UploadResult>>> PostFile(
         [FromForm] IEnumerable<IFormFile> files)
     {
         var maxAllowedFiles = 3;
