@@ -1,9 +1,58 @@
 ﻿@page "/"
+@using System.Net.Http.Headers
 
-<PageTitle>Index</PageTitle>
 
-<h1>Hello, world!</h1>
+<PageTitle>Create File</PageTitle>
 
-Welcome to your new app.
+<h1>BBHack2k22</h1>
+<EditForm Model="fileNames" OnSubmit="() => { }">
+    <p>
+        <label>
+            Select application photos
+            <InputFile OnChange="@OnInputFileChange" multiple />
+        </label>
+    </p>
+    <button type="submit">Submit</button>
+</EditForm>
 
-<SurveyPrompt Title="How is Blazor working for you?"/>
+
+@if (fileNames != null)
+{
+    <div class="card">
+        <div class="card-body">
+            <ul>
+                @foreach (var file in fileNames)
+                {
+                    <li>
+                        File: @file
+                        <br>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+}
+
+@* <button type="submit">Submit</button> *@
+
+@code
+{
+    private List<string> fileNames = new();
+    long maxFileSize = 1024 * 1 * 1_000_000;
+    
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        
+        using var content = new MultipartFormDataContent();
+        foreach (var file in e.GetMultipleFiles(e.FileCount))
+        {
+            var fileContent = new StreamContent(file.OpenReadStream(maxFileSize));
+            fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+            fileNames.Add(file.Name);
+
+            content.Add(content: fileContent, name: "\"files\"", fileName: file.Name);
+        }
+        
+        StateHasChanged();
+    }
+}
