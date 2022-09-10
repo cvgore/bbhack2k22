@@ -1,1 +1,1 @@
-print("XD")
+from textReader import TextReader
