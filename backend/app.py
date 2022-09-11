@@ -1,9 +1,27 @@
+from flask import Flask, request
+from werkzeug.utils import secure_filename
 import font_metrics
 import translator
 
+app = Flask(__name__)
 tr = translator.Translator()
-tr.load_translation_file("../sample.csv")
-print(tr.translate_text("test123"))
-# ('szukaj', array([[395.01007  ,  12.6606865], [445.07962  ,  14.329674 ], [444.5371   ,  30.60573  ], [394.46756  ,  28.936743 ]], dtype=float32))
-ff = font_metrics.FontFitter()
-print(ff.fit_text([[395, 12], [445, 14], [444, 30], [394, 28]], tr.translate_text("szukaj"), 'fontname'))
+
+
+@app.route("/", methods=['POST'])
+def hello_world():
+    images = request.files['images']
+    tr_data = request.files['translation_data']
+
+    for file in images:
+        file.path = f"../var/uploads/{secure_filename(file.filename)}"
+        file.save(file.path)
+
+    for file in tr_data:
+        file.path = f"../var/uploads/{secure_filename(file.filename)}"
+        file.save(file.path)
+
+    tr.load_translation_file(tr_data[0].path)
+    ff = font_metrics.FontFitter()
+    ff.fit_text(..., tr.translate_text(...))
+
+
