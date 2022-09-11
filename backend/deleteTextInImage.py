@@ -22,6 +22,8 @@ def get_optimal_font_scale(text, width):
     return 1
 
 def deleteTextInImage(img_ocr, text_str, box):
+    img_ocr = cv2.cvtColor(img_ocr, cv2.COLOR_RGB2BGR)
+
     mask = np.zeros(img_ocr.shape[:2], dtype="uint8")
     x0, y0 = box[0]
     x1, y1 = box[1]
@@ -34,8 +36,7 @@ def deleteTextInImage(img_ocr, text_str, box):
     cv2.line(mask, (x_mid0, y_mid0), (x_mid1, y_mid1), 255, thickness)
     font_scale = get_optimal_font_scale(text_str, width)
     img_inpainted = cv2.inpaint(img_ocr, mask, 7, cv2.INPAINT_NS)
-    img_ocr = cv2.putText(img_inpainted, text_str, (x_mid1, y_mid1), cv2.FONT_HERSHEY_SIMPLEX, font_scale, (255, 0, 0), 2)
+    img_ocr = cv2.putText(img_inpainted, text_str, (x_mid1, y_mid1), cv2.FONT_HERSHEY_COMPLEX, font_scale, (0, 0, 0), 2)
     img_rgb = cv2.cvtColor(img_ocr, cv2.COLOR_BGR2RGB)
     return img_rgb
-
 

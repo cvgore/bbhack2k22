@@ -30,7 +30,7 @@ public class FilesaveController : ControllerBase
     }
     
     [HttpPost]
-    public async Task<ActionResult<Byte[]>> PostFile([FromForm] List<IFormFile> fileList)
+    public async Task<IActionResult> PostFile([FromForm] List<IFormFile> fileList)
     {
         long maxFileSize = 1024 * 1 * 1_000_000;
         var imagesList = Request.Form.Files.Where(x => x.Name == "ImgFiles").ToList();
@@ -43,29 +43,26 @@ public class FilesaveController : ControllerBase
             var fileContent2 = new StreamContent(file.OpenReadStream());
             fileContent2.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
 
-            content.Add(content: fileContent2, name: "images", fileName: file.Name);
+            content.Add(content: fileContent2, name: "images", fileName: file.FileName);
         }
         foreach (var file in translationList)
         {
             var fileContent = new StreamContent(file.OpenReadStream());
             fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
 
-            content.Add(content: fileContent, name: "translation", fileName: file.Name);
+            content.Add(content: fileContent, name: "translation", fileName: file.FileName);
         }
 
         var client = _clientFactory.CreateClient();
         
         var response = await client.PostAsync("http://localhost:6000/" , content);
-        Byte[] result;
         if (response.IsSuccessStatusCode)
         {
-            result = await response.Content.ReadAsByteArrayAsync();
+            return File(await response.Content.ReadAsStreamAsync(), "application/zip", "cplotek.zip");
         }
         else
         {
             return BadRequest();
         }
-
-        return new CreatedResult("",result);
     }
 }

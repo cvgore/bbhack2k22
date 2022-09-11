@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 using BBHack2k22.Front.Models;
 using Microsoft.AspNetCore.Components;
@@ -52,14 +53,14 @@ public partial class Index
                 content.Add(content: fileContent, name: "\"TranslationFiles\"", fileName: file.Name);
             }
             var response = await Client.PostAsync("http://localhost:5072/api/Filesave", content);
+            
             if (response.IsSuccessStatusCode)
             {
-                var baseString = await response.Content.ReadAsStringAsync();
-                await jsRuntime.InvokeVoidAsync("downloadFile", "application/zip", baseString, "test.zip");
+                var bytearray = await response.Content.ReadAsByteArrayAsync();
+                await jsRuntime.InvokeVoidAsync("downloadFile", "application/zip", bytearray, "test.zip");
             }
-        }
-        catch (Exception e)
-        {
+        }   
+        catch(Exception e){
             Console.WriteLine(e);
             throw;
         }
