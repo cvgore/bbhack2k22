@@ -10,4 +10,8 @@
       <Folder Include="Components" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Include="wwwroot\pdfFiles\sample.pdf" />
+    </ItemGroup>
+
 </Project>
