@@ -1,145 +1,56 @@
 ﻿@page "/"
-@using System.Net.Http.Headers
-@using System.Runtime.Serialization.Formatters.Binary
-@using System.Text
-@using System.Text.Json
-@using BBHack2k22.Front.Models
+@using BBHack2k22.Front.Components
 @inject HttpClient Client
-
+@inject NavigationManager NavManager
+@inject IJSRuntime jsRuntime
 
 <PageTitle>Create File</PageTitle>
-
-<h1>BBHack2k22</h1>
-<EditForm Model="FormModel" OnSubmit="@Submit">
-    <p>
-        <label>
-            Select application photos:<br/>
-            <InputFile OnChange="@OnInputImageFileChange" multiple />
-        </label>
-    </p>
-    <p>
-            <label>
-                Select application translation files:<br/>
-                <InputFile OnChange="@OnInputTranslationFileChange" multiple />
-            </label>
-        </p>
-    <button type="submit">Submit</button>
-</EditForm>
-
-
-@if (fileNames != null)
-{
-    <div class="card">
-        <div class="card-body">
-            <ul>
-                @foreach (var file in fileNames)
-                {
-                    <li>
-                        File: @file
-                        <br>
-                    </li>
-                    <li>
-                        Stored File Name: @GetStoredFiles(file)
-                        <br>
-                    </li>
-                }
-            </ul>
+<div class="container pt-4">
+    <div class="row pt-6">
+        <div class="col-12 col-lg-6">
+            <div class="col-12 pb-5">
+                <h1 class="font-weight-bold">BB Hack 2k22</h1>
+            </div>
+            <div class="col-12">
+                <EditForm Model="FormModel" OnSubmit="@Submit">
+                    <div class="col-12 pb-1">
+                        <div class="mb-3">
+                            <label for="formFileMultiple" class="form-label font-weight-bold"> Application images:</label>
+                            <InputFile class="form-control" d="formFileMultiple" OnChange="@OnInputImageFileChange" multiple accept=".png" />
+                        </div>
+                    </div>
+                    <div class="col-12 pb-3">
+                        <p>
+                            <div class="mb-3">
+                                <label for="formFileMultiple" class="form-label font-weight-bold"> Application translation files:</label>
+                                <InputFile class="form-control" d="formFileMultiple" OnChange="@OnInputTranslationFileChange" multiple  accept=".csv" />
+                            </div>
+                        </p>
+                    </div>
+                    <div class="col-12 col-md-5 pt-4">
+                        <button type="submit" class="btn btn-primary w-100 py-2">Submit</button>
+                    </div>
+                </EditForm>
+            </div>
         </div>
     </div>
-}
+</div>
 
-@* <button type="submit">Submit</button> *@
 
-@code
-{
-    public FormModel FormModel { get; set; } = new() {ImgFiles = new(), TranslationFiles = new()};
-    private List<string> fileNames = new();
-    private List<UploadResult> _uploadResults = new();
-    long maxFileSize = 1024 * 1 * 1_000_000;
+<button @onclick="@EnableModal" class="btn btn-primary">View Movies</button>
 
-    private async Task OnInputFileChange(InputFileChangeEventArgs e)
-    {
-        
-        using var content = new MultipartFormDataContent();
-        foreach (var file in e.GetMultipleFiles(e.FileCount))
-        {
-            // var fileContent = new StreamContent(file.OpenReadStream(maxFileSize));
-            // fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
-            // fileNames.Add(file.Name);
-            //
-            // content.Add(content: fileContent, name: "\"files\"", fileName: file.Name);
-            
-            
-        }
-        
-        
-
-        // var response = await Client.PostAsync("http://localhost:5072/api/Filesave", );
-        //
-        // var newUploadResult = await response.Content.ReadFromJsonAsync<List<UploadResult>>();
-        //
-        // if (newUploadResult is not null)
-        //     _uploadResults.Concat(newUploadResult).ToList();
-    }
-
-    private async Task OnInputTranslationFileChange(InputFileChangeEventArgs e)
-    {
-        foreach (var file in e.GetMultipleFiles(e.FileCount))
-        {
-            FormModel.TranslationFiles.Add(file);
-        }
-    }
+@code {
+    [CascadingParameter] public IModalService Modal { get; set; }
     
-    private async Task OnInputImageFileChange(InputFileChangeEventArgs e)
+    private void EnableModal()
     {
-        foreach (var file in e.GetMultipleFiles(e.FileCount))
+        var options = new ModalOptions()
         {
-            FormModel.ImgFiles.Add(file);
-        }
-    }
-    
-    
+            HideCloseButton = true,
+            DisableBackgroundCancel = true,
+            Position = ModalPosition.Middle
+        };
 
-    private async Task Submit()
-    {
-        var oneSimpleFile = FormModel.ImgFiles.First();
-
-        try
-        {
-            using var content = new MultipartFormDataContent();
-            foreach (var file in FormModel.ImgFiles)
-            {
-                var fileContent2 = new StreamContent(file.OpenReadStream(maxFileSize));
-                fileContent2.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
-                fileNames.Add(file.Name);
-
-                content.Add(content: fileContent2, name: "\"ImgFiles\"", fileName: file.Name);
-            }
-            foreach (var file in FormModel.TranslationFiles)
-            {
-                var fileContent = new StreamContent(file.OpenReadStream(maxFileSize));
-                fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
-                fileNames.Add(file.Name);
-
-                content.Add(content: fileContent, name: "\"TranslationFiles\"", fileName: file.Name);
-            }
-            var response = await Client.PostAsync("http://localhost:5072/api/Filesave", content);
-            // var response = await Client.PostAsJsonAsync("http://localhost:5072/api/Filesave", JsonSerializer.Serialize(FormModel));
-            if (response == null)
-            {
-                
-            }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
-    }
-
-    private string? GetStoredFiles(string fileName)
-    {
-        var uploadResult = _uploadResults.FirstOrDefault(x => x.FileName == fileName);
-        return uploadResult?.StoredFileName ?? "Filed not found";
+        Modal.Show<LoadingModal>("", options);
     }
 }
