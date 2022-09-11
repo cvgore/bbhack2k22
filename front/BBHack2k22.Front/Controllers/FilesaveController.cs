@@ -40,14 +40,14 @@ public class FilesaveController : ControllerBase
             var fileContent2 = new StreamContent(file.OpenReadStream());
             fileContent2.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
 
-            content.Add(content: fileContent2, name: "\"ImgFiles\"", fileName: file.Name);
+            content.Add(content: fileContent2, name: "images", fileName: file.Name);
         }
         foreach (var file in translationList)
         {
             var fileContent = new StreamContent(file.OpenReadStream());
             fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
 
-            content.Add(content: fileContent, name: "\"TranslationFiles\"", fileName: file.Name);
+            content.Add(content: fileContent, name: "translation", fileName: file.Name);
         }
 
         var client = _clientFactory.CreateClient();
