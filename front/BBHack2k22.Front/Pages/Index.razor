@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using BBHack2k22.Front.Components
 @inject HttpClient Client
 @inject NavigationManager NavManager
 @inject IJSRuntime jsRuntime
@@ -34,3 +35,22 @@
         </div>
     </div>
 </div>
+
+
+<button @onclick="@EnableModal" class="btn btn-primary">View Movies</button>
+
+@code {
+    [CascadingParameter] public IModalService Modal { get; set; }
+    
+    private void EnableModal()
+    {
+        var options = new ModalOptions()
+        {
+            HideCloseButton = true,
+            DisableBackgroundCancel = true,
+            Position = ModalPosition.Middle
+        };
+
+        Modal.Show<LoadingModal>("", options);
+    }
+}
