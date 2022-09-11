@@ -8,98 +8,64 @@ namespace BBHack2k22.Front.Pages;
 
 public partial class Index
 {
-    // public FormModel FormModel { get; set; } = new();
-    //
-    // [Inject]
-    // private ILogger<Index> Logger { get; set; }
-    // private List<string> fileNames = new();
-    //
-    // private async Task OnInputFileChange(InputFileChangeEventArgs e)
-    // {
-    //     long maxFileSize = 1024 * 1 * 1_000_000;
-    //     using var content = new MultipartFormDataContent();
-    //     foreach (var file in e.GetMultipleFiles(e.FileCount))
-    //     {
-    //         var fileContent = new StreamContent(file.OpenReadStream(maxFileSize));
-    //         fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
-    //         fileNames.Add(file.Name);
-    //         
-    //         content.Add(content: fileContent, name: "\"files\"", fileName: file.Name);
-    //     }
-    //     
-    //     // shouldRender = false;
-    //     // long maxFileSize = 1024 * 1 * 1_000_000;
-    //     // var upload = false;
-    //     //
-    //     // using var content = new MultipartFormDataContent();
-    //     //
-    //     // foreach (var file in e.GetMultipleFiles(e.FileCount))
-    //     // {
-    //     //     if (uploadResults.SingleOrDefault(
-    //     //         f => f.FileName == file.Name) is null)
-    //     //     {
-    //     //         try
-    //     //         {
-    //     //             var fileContent = 
-    //     //                 new StreamContent(file.OpenReadStream(maxFileSize));
-    //     //
-    //     //             // fileContent.Headers.ContentType = 
-    //     //             //     new MediaTypeHeaderValue(file.ContentType);
-    //     //
-    //     //             files.Add(new() { Name = file.Name });
-    //     //
-    //     //             content.Add(
-    //     //                 content: fileContent,
-    //     //                 name: "\"files\"",
-    //     //                 fileName: file.Name);
-    //     //             
-    //     //             upload = true;
-    //     //         }
-    //     //         catch (Exception ex)
-    //     //         {
-    //     //             Logger.LogInformation(
-    //     //                 "{FileName} not uploaded (Err: 6): {Message}", 
-    //     //                 file.Name, ex.Message);
-    //     //
-    //     //             uploadResults.Add(
-    //     //                 new()
-    //     //                 {
-    //     //                     FileName = file.Name, 
-    //     //                     ErrorCode = 6, 
-    //     //                     Uploaded = false
-    //     //                 });
-    //     //         }
-    //     //     }
-    //     // }
-    //     //
-    //     // if (upload)
-    //     // {
-    //     //     var client = ClientFactory.CreateClient();
-    //     //
-    //     //     var response = 
-    //     //         await client.PostAsync("http://localhost:5072/Filesave", 
-    //     //         content);
-    //     //
-    //     //     if (response.IsSuccessStatusCode)
-    //     //     {
-    //     //         var options = new JsonSerializerOptions
-    //     //         {
-    //     //             PropertyNameCaseInsensitive = true,
-    //     //         };
-    //     //
-    //     //         using var responseStream =
-    //     //             await response.Content.ReadAsStreamAsync();
-    //     //
-    //     //         var newUploadResults = await JsonSerializer
-    //     //             .DeserializeAsync<IList<UploadResult>>(responseStream, options);
-    //     //
-    //     //         if (newUploadResults is not null)
-    //     //         {
-    //     //             uploadResults = uploadResults.Concat(newUploadResults).ToList();
-    //     //         }
-    //     //     }
-    //     // }
-    //     //
-    //     // //shouldRender = true;
-    // }
+    public FormModel FormModel { get; set; } = new() {ImgFiles = new(), TranslationFiles = new()};
+    private List<string> fileNames = new();
+    private List<UploadResult> _uploadResults = new();
+    long maxFileSize = 1024 * 1 * 1_000_000;
+
+    private async Task OnInputTranslationFileChange(InputFileChangeEventArgs e)
+    {
+        foreach (var file in e.GetMultipleFiles(e.FileCount))
+        {
+            FormModel.TranslationFiles.Add(file);
+        }
+    }
+
+    private async Task OnInputImageFileChange(InputFileChangeEventArgs e)
+    {
+        foreach (var file in e.GetMultipleFiles(e.FileCount))
+        {
+            FormModel.ImgFiles.Add(file);
+        }
+    }
+
+    private async Task Submit()
+    {
+        try
+        {
+            using var content = new MultipartFormDataContent();
+            foreach (var file in FormModel.ImgFiles)
+            {
+                var fileContent2 = new StreamContent(file.OpenReadStream(maxFileSize));
+                fileContent2.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+                fileNames.Add(file.Name);
+
+                content.Add(content: fileContent2, name: "\"ImgFiles\"", fileName: file.Name);
+            }
+            foreach (var file in FormModel.TranslationFiles)
+            {
+                var fileContent = new StreamContent(file.OpenReadStream(maxFileSize));
+                fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+                fileNames.Add(file.Name);
+
+                content.Add(content: fileContent, name: "\"TranslationFiles\"", fileName: file.Name);
+            }
+            var response = await Client.PostAsync("http://localhost:5072/api/Filesave", content);
+            if (response.IsSuccessStatusCode)
+            {
+                NavManager.NavigateTo("/");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    private string? GetStoredFiles(string fileName)
+    {
+        var uploadResult = _uploadResults.FirstOrDefault(x => x.FileName == fileName);
+        return uploadResult?.StoredFileName ?? "Filed not found";
+    }
 }
