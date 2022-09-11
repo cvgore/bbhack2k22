@@ -97,19 +97,23 @@
             FormModel.ImgFiles.Add(file);
         }
     }
+    
+    
 
     private async Task Submit()
     {
+        var oneSimpleFile = FormModel.ImgFiles.First();
+
         try
         {
             using var content = new MultipartFormDataContent();
             foreach (var file in FormModel.ImgFiles)
             {
-                var fileContent = new StreamContent(file.OpenReadStream(maxFileSize));
-                fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+                var fileContent2 = new StreamContent(file.OpenReadStream(maxFileSize));
+                fileContent2.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
                 fileNames.Add(file.Name);
 
-                content.Add(content: fileContent, name: "ImgFiles", fileName: file.Name);
+                content.Add(content: fileContent2, name: "\"ImgFiles\"", fileName: file.Name);
             }
             foreach (var file in FormModel.TranslationFiles)
             {
@@ -117,14 +121,14 @@
                 fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
                 fileNames.Add(file.Name);
 
-                content.Add(content: fileContent, name: "TranslationFiles", fileName: file.Name);
+                content.Add(content: fileContent, name: "\"TranslationFiles\"", fileName: file.Name);
             }
-            // var response = await Client.PostAsync("http://localhost:5072/api/Filesave", content);
+            var response = await Client.PostAsync("http://localhost:5072/api/Filesave", content);
             // var response = await Client.PostAsJsonAsync("http://localhost:5072/api/Filesave", JsonSerializer.Serialize(FormModel));
-            // if (response == null)
-            // {
-            //     
-            // }
+            if (response == null)
+            {
+                
+            }
         }
         catch (Exception e)
         {
