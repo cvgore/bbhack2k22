@@ -55,18 +55,21 @@ class FontFitter:
             and a[3][1] >= b[3][1]
 
     def _ellipsis_text(self, text_str, offset_back):
-        return text_str[:-offset_back] + '...'
+        if offset_back > 3:
+            return text_str[:-offset_back] + '...'
+        else:
+            return text_str
 
     def fit_text(self, box, text_str, font_name):
         normalized_box = self._normalize_box(box)
         ellipsis_lvl = 3
         measurement = self._measure_text(box, text_str, font_name)
 
-        while self._box_fits(normalized_box, measurement) is False:
-            ellipsis_lvl = ellipsis_lvl + 1
-            measurement = self._measure_text(box, self._ellipsis_text(text_str, ellipsis_lvl), font_name)
+        # while self._box_fits(normalized_box, measurement) is False:
+        #     ellipsis_lvl = ellipsis_lvl + 1
+        #     measurement = self._measure_text(box, self._ellipsis_text(text_str, ellipsis_lvl), font_name)
+        #
+        # text = self._ellipsis_text(text_str, ellipsis_lvl)
+        font_size = self.get_optimal_font_scale(text_str, self._get_box_dims(box)[0])
 
-        text = self._ellipsis_text(text_str, ellipsis_lvl)
-        font_size = self.get_optimal_font_scale(text, self._get_box_dims(box)[0])
-
-        return box, text, font_size
+        return box, text_str, font_size
