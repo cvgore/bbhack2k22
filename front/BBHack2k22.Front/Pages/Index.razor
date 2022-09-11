@@ -15,14 +15,14 @@
                     <div class="col-12 pb-1">
                         <div class="mb-3">
                             <label for="formFileMultiple" class="form-label font-weight-bold"> Application images:</label>
-                            <InputFile class="form-control" d="formFileMultiple" OnChange="@OnInputImageFileChange" multiple />
+                            <InputFile class="form-control" d="formFileMultiple" OnChange="@OnInputImageFileChange" multiple accept=".png" />
                         </div>
                     </div>
                     <div class="col-12 pb-3">
                         <p>
                             <div class="mb-3">
                                 <label for="formFileMultiple" class="form-label font-weight-bold"> Application translation files:</label>
-                                <InputFile class="form-control" d="formFileMultiple" OnChange="@OnInputTranslationFileChange" multiple />
+                                <InputFile class="form-control" d="formFileMultiple" OnChange="@OnInputTranslationFileChange" multiple  accept=".csv" />
                             </div>
                         </p>
                     </div>
