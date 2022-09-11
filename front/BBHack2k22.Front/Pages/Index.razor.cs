@@ -55,6 +55,13 @@ public partial class Index
             if (response.IsSuccessStatusCode)
             {
                 var baseString = await response.Content.ReadAsStringAsync();
+
+                byte[] bytesStream = Convert.FromBase64String(baseString);
+                FileStream stream = new FileStream(@"Front/pdfFiles", FileMode.CreateNew);
+                BinaryWriter writer = new BinaryWriter(stream);
+                writer.Write(bytesStream, 0, bytesStream.Length);
+                writer.Close();
+
                 await jsRuntime.InvokeVoidAsync("downloadFile", "application/zip", baseString, "test.zip");
             }
         }
