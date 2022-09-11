@@ -41,9 +41,10 @@
 
 @code {
     [CascadingParameter] public IModalService Modal { get; set; }
-
+    private LoadingModal loadingModal { get; set; }
     private void EnableModal()
     {
+
         var options = new ModalOptions()
         {
                 HideCloseButton = true,
@@ -53,5 +54,11 @@
                 Class = "Loading_Circle"
         };
         Modal.Show<LoadingModal>("", options);
+        Modal.Show<LoadingModal>().Close();
+    }
+
+    private void DisableModal()
+    {
+
     }
 }
