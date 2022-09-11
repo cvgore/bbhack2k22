@@ -41,16 +41,17 @@
 
 @code {
     [CascadingParameter] public IModalService Modal { get; set; }
-    
+
     private void EnableModal()
     {
         var options = new ModalOptions()
         {
-            HideCloseButton = true,
-            DisableBackgroundCancel = true,
-            Position = ModalPosition.Middle
+                HideCloseButton = true,
+                DisableBackgroundCancel = true,
+                Position = ModalPosition.Middle,
+                Size = ModalSize.Small,
+                Class = "Loading_Circle"
         };
-
         Modal.Show<LoadingModal>("", options);
     }
 }
