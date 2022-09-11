@@ -1,9 +1,37 @@
 ﻿@page "/"
+@using BBHack2k22.Front.Components
+@inject HttpClient Client
+@inject NavigationManager NavManager
+@inject IJSRuntime jsRuntime
 
-<PageTitle>Index</PageTitle>
-
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
-
-<SurveyPrompt Title="How is Blazor working for you?"/>
+<PageTitle>Create File</PageTitle>
+<div class="container pt-4">
+    <div class="row pt-6">
+        <div class="col-12 col-lg-6">
+            <div class="col-12 pb-5">
+                <h1 class="font-weight-bold">BB Hack 2K22</h1>
+            </div>
+            <div class="col-12">
+                <EditForm Model="FormModel" OnSubmit="@Submit">
+                    <div class="col-12 pb-1">
+                        <div class="mb-3">
+                            <label for="formFileMultiple" class="form-label font-weight-bold"> Application images:</label>
+                            <InputFile class="form-control" d="formFileMultiple" OnChange="@OnInputImageFileChange" multiple accept=".png" />
+                        </div>
+                    </div>
+                    <div class="col-12 pb-3">
+                        <p>
+                            <div class="mb-3">
+                                <label for="formFileMultiple" class="form-label font-weight-bold"> Application translation files:</label>
+                                <InputFile class="form-control" d="formFileMultiple" OnChange="@OnInputTranslationFileChange" multiple  accept=".csv" />
+                            </div>
+                        </p>
+                    </div>
+                    <div class="col-12 col-md-5 pt-4">
+                        <button type="submit" class="btn btn-primary w-100 py-2">Submit</button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+</div>

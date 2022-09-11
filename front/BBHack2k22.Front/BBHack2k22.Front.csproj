@@ -6,4 +6,12 @@
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
+    <ItemGroup>
+      <None Include="wwwroot\pdfFiles\sample.pdf" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Blazored.Modal" Version="7.0.0-preiew.4" />
+    </ItemGroup>
+
 </Project>

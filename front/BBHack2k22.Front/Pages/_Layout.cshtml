@@ -27,6 +27,17 @@
     <a class="dismiss">🗙</a>
 </div>
 
+
 <script src="_framework/blazor.server.js"></script>
+<script src="_content/Blazored.Modal/blazored.modal.js"></script>
+<script>
+function downloadFile(contentType, arrbyte, fileName) {
+    const file = new File([arrbyte], fileName, { type: contentType });
+    var link = document.createElement('a');
+    link.href = URL.createObjectURL(file);
+    link.download = fileName;
+    link.click();
+}
+</script>
 </body>
 </html>

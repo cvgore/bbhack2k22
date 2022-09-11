@@ -1,0 +1,17 @@
+﻿@page "/display/{FileName}"
+
+<embed src="@Path" style="width:99%; height:53em;" />
+
+@code {
+    [Parameter]
+    public string FileName { get; set; }
+
+    public string Path { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Path = $"pdfFiles/{FileName}.pdf";
+        base.OnInitialized();
+    }
+}
+

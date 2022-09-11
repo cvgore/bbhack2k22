@@ -1,13 +1,12 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using BBHack2k22.Front.Data;
+using Blazored.Modal;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
+builder.Services.AddHttpClient();
+builder.Services.AddBlazoredModal();
 
 var app = builder.Build();
 
@@ -19,13 +18,15 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
-
 app.UseStaticFiles();
 
-app.UseRouting();
 
-app.MapBlazorHub();
-app.MapFallbackToPage("/_Host");
+app.UseRouting();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+    endpoints.MapBlazorHub();
+    endpoints.MapFallbackToPage("/_Host");
+});
 
 app.Run();

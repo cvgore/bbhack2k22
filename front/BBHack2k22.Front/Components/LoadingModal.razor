@@ -1,0 +1,11 @@
+﻿    <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+    
+    
+@code{
+    [CascadingParameter] public BlazoredModalInstance ModalInstance { get; set; }
+
+    public async Task Close()
+    {
+        await ModalInstance.CloseAsync();
+    }
+}
