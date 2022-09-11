@@ -1,1 +1,11 @@
-﻿<p class="mx-auto my-auto">Processing the files, please wait...</p>
+﻿    <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+    
+    
+@code{
+    [CascadingParameter] public BlazoredModalInstance ModalInstance { get; set; }
+
+    public async Task Close()
+    {
+        await ModalInstance.CloseAsync();
+    }
+}
