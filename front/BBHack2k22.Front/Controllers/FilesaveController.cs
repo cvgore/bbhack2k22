@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Http.Headers;
+using microsoftHttp = Microsoft.Net.Http.Headers;
 using System.Threading.Tasks;
 using BBHack2k22.Front.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 
 [ApiController]
@@ -27,7 +30,7 @@ public class FilesaveController : ControllerBase
     }
     
     [HttpPost]
-    public async Task<IActionResult> PostFile([FromForm] List<IFormFile> fileList)
+    public async Task<ActionResult<Byte[]>> PostFile([FromForm] List<IFormFile> fileList)
     {
         long maxFileSize = 1024 * 1 * 1_000_000;
         var imagesList = Request.Form.Files.Where(x => x.Name == "ImgFiles").ToList();
@@ -53,11 +56,16 @@ public class FilesaveController : ControllerBase
         var client = _clientFactory.CreateClient();
         
         var response = await client.PostAsync("http://localhost:6000/" , content);
+        Byte[] result;
         if (response.IsSuccessStatusCode)
         {
-            
+            result = await response.Content.ReadAsByteArrayAsync();
+        }
+        else
+        {
+            return BadRequest();
         }
 
-        return new CreatedResult("",new {});
+        return new CreatedResult("",result);
     }
 }
