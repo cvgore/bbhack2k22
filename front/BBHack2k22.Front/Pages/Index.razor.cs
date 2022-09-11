@@ -3,12 +3,13 @@ using System.Text.Json;
 using BBHack2k22.Front.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.JSInterop;
 
 namespace BBHack2k22.Front.Pages;
 
 public partial class Index
 {
-    public FormModel FormModel { get; set; } = new() {ImgFiles = new(), TranslationFiles = new()};
+    public FormModel FormModel { get; set; } = new() { ImgFiles = new(), TranslationFiles = new() };
     private List<string> fileNames = new();
     private List<UploadResult> _uploadResults = new();
     long maxFileSize = 1024 * 1 * 1_000_000;
@@ -53,7 +54,8 @@ public partial class Index
             var response = await Client.PostAsync("http://localhost:5072/api/Filesave", content);
             if (response.IsSuccessStatusCode)
             {
-                NavManager.NavigateTo("/");
+                var baseString = await response.Content.ReadAsStringAsync();
+                await jsRuntime.InvokeVoidAsync("downloadFile", "application/zip", baseString, "test.zip");
             }
         }
         catch (Exception e)
