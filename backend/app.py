@@ -25,3 +25,6 @@ def hello_world():
     ff.fit_text(..., tr.translate_text(...))
 
 
+import deleteTextInImage as dtii
+
+dtii.deleteTextInImage('zz.png')
