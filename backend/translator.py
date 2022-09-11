@@ -5,7 +5,7 @@ class Translator:
 
     def load_translation_file(self, csv_file_path):
         with open(csv_file_path, 'r') as file:
-            csv_reader = csv.reader(file, delimiter=' ', quotechar='"')
+            csv_reader = csv.reader(file, delimiter=';', quotechar='"')
 
             for row in csv_reader:
                 self.translations[row[0]] = row[1]
