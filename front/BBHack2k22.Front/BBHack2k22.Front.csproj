@@ -7,11 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Components" />
+      <None Include="wwwroot\pdfFiles\sample.pdf" />
     </ItemGroup>
 
     <ItemGroup>
-      <None Include="wwwroot\pdfFiles\sample.pdf" />
+      <PackageReference Include="Blazored.Modal" Version="7.0.0-preiew.4" />
     </ItemGroup>
 
 </Project>
